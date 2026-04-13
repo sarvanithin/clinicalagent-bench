@@ -13,6 +13,12 @@ from clinicalagent_bench.agent_harness.runner import (
     ScenarioRun,
 )
 from clinicalagent_bench.agent_harness.adapters import LiteLLMAgent, MockAgent
+from clinicalagent_bench.agent_harness.stress import (
+    StressConfig,
+    StressReport,
+    StressResult,
+    StressTestRunner,
+)
 
 __all__ = [
     "ActionType",
@@ -25,4 +31,8 @@ __all__ = [
     "MockAgent",
     "RunConfig",
     "ScenarioRun",
+    "StressConfig",
+    "StressReport",
+    "StressResult",
+    "StressTestRunner",
 ]
