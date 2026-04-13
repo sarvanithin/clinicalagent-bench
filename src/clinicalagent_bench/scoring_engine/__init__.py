@@ -19,6 +19,10 @@ from clinicalagent_bench.scoring_engine.bias_detector import (
     BiasMetric,
     BiasReport,
 )
+from clinicalagent_bench.scoring_engine.compliance import (
+    ComplianceReport,
+    GMLPComplianceReporter,
+)
 
 __all__ = [
     "AccuracyScore",
@@ -26,9 +30,11 @@ __all__ = [
     "BiasDetector",
     "BiasMetric",
     "BiasReport",
+    "ComplianceReport",
     "ConsistencyScore",
     "EfficiencyScore",
     "EnsembleVerdict",
+    "GMLPComplianceReporter",
     "JudgeVerdict",
     "LLMJudgeEnsemble",
     "RefusalScore",

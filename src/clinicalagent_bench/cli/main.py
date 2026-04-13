@@ -280,6 +280,81 @@ def inspect(scenario_id: str, scenarios_dir: Path | None) -> None:
             console.print(f"  - {e.description}")
 
 
+@cli.command()
+@click.argument("results_file", type=click.Path(exists=True, path_type=Path))
+@click.option("--output", "-o", type=click.Path(path_type=Path), default=None, help="Output JSON file")
+@click.option("--markdown", is_flag=True, help="Print Markdown report to stdout")
+@click.option("--agent-name", default="", help="Agent name for the report")
+@click.option("--model", "-m", default="", help="Model name for the report")
+def compliance(
+    results_file: Path,
+    output: Path | None,
+    markdown: bool,
+    agent_name: str,
+    model: str,
+) -> None:
+    """Generate FDA GMLP compliance report from benchmark results."""
+    from clinicalagent_bench.scoring_engine.scorer import BenchmarkScores
+    from clinicalagent_bench.scoring_engine.compliance import GMLPComplianceReporter
+
+    data = json.loads(results_file.read_text())
+    scores = BenchmarkScores.model_validate(data)
+
+    reporter = GMLPComplianceReporter()
+    report = reporter.generate(
+        scores,
+        agent_name=agent_name or scores.agent_name,
+        model=model,
+    )
+
+    # Display summary
+    color = "green" if report.overall_compliance >= 0.7 else "yellow" if report.overall_compliance >= 0.5 else "red"
+    console.print(Panel(
+        f"[bold {color}]GMLP Compliance: {report.overall_compliance:.0%}[/bold {color}]\n\n"
+        f"Agent: [cyan]{report.agent_name}[/cyan]\n"
+        f"CAS: {report.cas_score:.3f} | Safety: {report.safety_score:.3f}\n"
+        f"Critical Violations: {report.critical_violations}",
+        title="FDA GMLP Compliance Report",
+    ))
+
+    # Principle table
+    table = Table(title="GMLP Principle Assessment")
+    table.add_column("#", justify="right", style="cyan")
+    table.add_column("Principle", style="white", max_width=50)
+    table.add_column("Status", justify="center")
+    table.add_column("Score", justify="right")
+
+    status_styles = {
+        "compliant": "[green]PASS[/green]",
+        "partial": "[yellow]PARTIAL[/yellow]",
+        "non_compliant": "[red]FAIL[/red]",
+        "not_applicable": "[dim]N/A[/dim]",
+    }
+
+    for a in report.principle_assessments:
+        table.add_row(
+            str(a.principle_number),
+            a.principle_title[:50],
+            status_styles.get(a.status, a.status),
+            f"{a.score:.2f}",
+        )
+
+    console.print(table)
+
+    if report.regulatory_notes:
+        console.print("\n[bold]Regulatory Notes:[/bold]")
+        for note in report.regulatory_notes:
+            console.print(f"  [yellow]- {note}[/yellow]")
+
+    if markdown:
+        md = reporter.export_markdown(report)
+        console.print(f"\n{md}")
+
+    if output:
+        reporter.export_json(report, str(output))
+        console.print(f"\n[green]Report saved to {output}[/green]")
+
+
 def _display_results(scores: object) -> None:
     """Display benchmark scores in a rich table."""
     from clinicalagent_bench.scoring_engine.scorer import BenchmarkScores
