@@ -33,7 +33,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Supervision requirements not clearly met
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - billing
 - incident_to

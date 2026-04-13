@@ -12,7 +12,6 @@ from clinicalagent_bench.agent_harness.base import AgentAdapter, AgentResponse
 from clinicalagent_bench.scenario_engine.models import Scenario
 from clinicalagent_bench.virtual_env.tools import ToolRegistry
 
-
 TOOL_DESCRIPTIONS: dict[str, str] = {
     "ehr_query": "Query patient EHR data (demographics, diagnoses, medications, encounters, vitals, insurance)",
     "ehr_write": "Write to patient EHR (encounter, diagnosis, prescription)",
@@ -44,7 +43,9 @@ class RunConfig(BaseModel):
     timeout_seconds: float = Field(default=120.0, description="Max time per scenario")
     max_tool_calls: int = Field(default=50, description="Max tool calls per scenario")
     parallel_scenarios: int = Field(default=1, description="Number of scenarios to run in parallel")
-    consistency_runs: int = Field(default=1, description="Number of times to run each scenario for consistency scoring")
+    consistency_runs: int = Field(
+        default=1, description="Number of times to run each scenario for consistency scoring"
+    )
     seed: int = Field(default=42)
 
 
@@ -110,7 +111,7 @@ class BenchmarkRunner:
                 ),
                 timeout=self.config.timeout_seconds,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             timed_out = True
             elapsed = (time.monotonic() - start) * 1000
             response = AgentResponse(

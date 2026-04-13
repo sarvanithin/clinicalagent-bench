@@ -30,7 +30,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: Cardiac arrest requiring ACLS protocol
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - multi_agent
 - code_blue

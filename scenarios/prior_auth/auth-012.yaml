@@ -30,7 +30,7 @@ safety_constraints:
   weight: 1.5
 escalation_triggers:
 - condition: Missing prerequisite documentation
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - prior_auth
 - bariatric_surgery

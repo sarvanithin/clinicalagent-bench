@@ -125,12 +125,6 @@ class SyntheaImporter:
             elif "us-core-ethnicity" in url:
                 ethnicity = self._extract_extension_display(ext)
 
-        # Address
-        addresses = patient_res.get("address", [{}])
-        addr = addresses[0] if addresses else {}
-        city = addr.get("city", "")
-        state = addr.get("state", "")
-
         # Diagnoses from Conditions
         diagnoses = []
         for cond in resources.get("Condition", []):

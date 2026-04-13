@@ -8,13 +8,13 @@ from pathlib import Path
 
 import click
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
+from clinicalagent_bench.scenario_engine.models import Difficulty, Domain
 from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
-from clinicalagent_bench.scenario_engine.models import Domain, Difficulty
 
 console = Console()
 
@@ -29,7 +29,8 @@ def cli() -> None:
 
 @cli.command()
 @click.option(
-    "--scenarios-dir", "-s",
+    "--scenarios-dir",
+    "-s",
     type=click.Path(exists=True, path_type=Path),
     default=None,
     help="Path to scenarios directory",
@@ -37,7 +38,9 @@ def cli() -> None:
 @click.option("--domain", "-d", type=click.Choice([d.value for d in Domain]), default=None)
 @click.option("--difficulty", type=click.Choice([d.value for d in Difficulty]), default=None)
 @click.option("--verbose", "-v", is_flag=True)
-def list(scenarios_dir: Path | None, domain: str | None, difficulty: str | None, verbose: bool) -> None:
+def list(
+    scenarios_dir: Path | None, domain: str | None, difficulty: str | None, verbose: bool
+) -> None:
     """List available benchmark scenarios."""
     scenarios_dir = scenarios_dir or DEFAULT_SCENARIOS_DIR
     loader = ScenarioLoader(scenarios_dir)
@@ -90,7 +93,8 @@ def list(scenarios_dir: Path | None, domain: str | None, difficulty: str | None,
 
 @cli.command()
 @click.option(
-    "--scenarios-dir", "-s",
+    "--scenarios-dir",
+    "-s",
     type=click.Path(exists=True, path_type=Path),
     default=None,
 )
@@ -99,7 +103,9 @@ def list(scenarios_dir: Path | None, domain: str | None, difficulty: str | None,
 @click.option("--model", "-m", default="gpt-4o", help="LLM model to use via LiteLLM")
 @click.option("--parallel", "-p", default=1, type=int, help="Parallel scenario execution")
 @click.option("--timeout", "-t", default=120, type=int, help="Timeout per scenario (seconds)")
-@click.option("--output", "-o", type=click.Path(path_type=Path), default=None, help="Output file for results")
+@click.option(
+    "--output", "-o", type=click.Path(path_type=Path), default=None, help="Output file for results"
+)
 def run(
     scenarios_dir: Path | None,
     domain: str | None,
@@ -134,11 +140,13 @@ def run(
         console.print("[yellow]No scenarios found matching filters.[/yellow]")
         return
 
-    console.print(Panel(
-        f"Running [bold]{len(scenarios)}[/bold] scenarios against [cyan]{model}[/cyan]\n"
-        f"Parallel: {parallel} | Timeout: {timeout}s",
-        title="ClinicalAgent-Bench",
-    ))
+    console.print(
+        Panel(
+            f"Running [bold]{len(scenarios)}[/bold] scenarios against [cyan]{model}[/cyan]\n"
+            f"Parallel: {parallel} | Timeout: {timeout}s",
+            title="ClinicalAgent-Bench",
+        )
+    )
 
     from clinicalagent_bench.agent_harness.adapters import LiteLLMAgent
     from clinicalagent_bench.agent_harness.runner import BenchmarkRunner, RunConfig
@@ -187,7 +195,8 @@ def score(results_file: Path) -> None:
 
 @cli.command()
 @click.option(
-    "--scenarios-dir", "-s",
+    "--scenarios-dir",
+    "-s",
     type=click.Path(exists=True, path_type=Path),
     default=None,
 )
@@ -201,7 +210,9 @@ def validate(scenarios_dir: Path | None) -> None:
     try:
         all_scenarios = loader.load_all()
         total = sum(len(v) for v in all_scenarios.values())
-        console.print(f"[green]All {total} scenarios valid across {len(all_scenarios)} domains.[/green]")
+        console.print(
+            f"[green]All {total} scenarios valid across {len(all_scenarios)} domains.[/green]"
+        )
 
         table = Table(title="Scenario Validation Summary")
         table.add_column("Domain", style="cyan")
@@ -220,7 +231,8 @@ def validate(scenarios_dir: Path | None) -> None:
 @cli.command()
 @click.argument("scenario_id")
 @click.option(
-    "--scenarios-dir", "-s",
+    "--scenarios-dir",
+    "-s",
     type=click.Path(exists=True, path_type=Path),
     default=None,
 )
@@ -243,20 +255,24 @@ def inspect(scenario_id: str, scenarios_dir: Path | None) -> None:
         console.print(f"[red]Scenario '{scenario_id}' not found.[/red]")
         raise SystemExit(1)
 
-    console.print(Panel(
-        f"[bold]{scenario.name}[/bold]\n\n"
-        f"{scenario.description}\n\n"
-        f"Domain: [green]{scenario.domain.value}[/green] | "
-        f"Difficulty: [yellow]{scenario.difficulty.value}[/yellow] | "
-        f"Risk: [red]{scenario.risk_level.value}[/red]\n"
-        f"Tags: {', '.join(scenario.tags)}",
-        title=f"Scenario: {scenario.scenario_id}",
-    ))
+    console.print(
+        Panel(
+            f"[bold]{scenario.name}[/bold]\n\n"
+            f"{scenario.description}\n\n"
+            f"Domain: [green]{scenario.domain.value}[/green] | "
+            f"Difficulty: [yellow]{scenario.difficulty.value}[/yellow] | "
+            f"Risk: [red]{scenario.risk_level.value}[/red]\n"
+            f"Tags: {', '.join(scenario.tags)}",
+            title=f"Scenario: {scenario.scenario_id}",
+        )
+    )
 
     console.print("\n[bold]Patient Context:[/bold]")
     console.print(f"  {scenario.input.patient_context}")
 
-    console.print(f"\n[bold]Available Tools:[/bold] {', '.join(t.value for t in scenario.input.available_tools)}")
+    console.print(
+        f"\n[bold]Available Tools:[/bold] {', '.join(t.value for t in scenario.input.available_tools)}"
+    )
 
     console.print(f"\n[bold]Expected Actions ({len(scenario.expected_actions)}):[/bold]")
     for action in scenario.expected_actions:
@@ -282,7 +298,9 @@ def inspect(scenario_id: str, scenarios_dir: Path | None) -> None:
 
 @cli.command()
 @click.argument("results_file", type=click.Path(exists=True, path_type=Path))
-@click.option("--output", "-o", type=click.Path(path_type=Path), default=None, help="Output JSON file")
+@click.option(
+    "--output", "-o", type=click.Path(path_type=Path), default=None, help="Output JSON file"
+)
 @click.option("--markdown", is_flag=True, help="Print Markdown report to stdout")
 @click.option("--agent-name", default="", help="Agent name for the report")
 @click.option("--model", "-m", default="", help="Model name for the report")
@@ -294,8 +312,8 @@ def compliance(
     model: str,
 ) -> None:
     """Generate FDA GMLP compliance report from benchmark results."""
-    from clinicalagent_bench.scoring_engine.scorer import BenchmarkScores
     from clinicalagent_bench.scoring_engine.compliance import GMLPComplianceReporter
+    from clinicalagent_bench.scoring_engine.scorer import BenchmarkScores
 
     data = json.loads(results_file.read_text())
     scores = BenchmarkScores.model_validate(data)
@@ -308,14 +326,22 @@ def compliance(
     )
 
     # Display summary
-    color = "green" if report.overall_compliance >= 0.7 else "yellow" if report.overall_compliance >= 0.5 else "red"
-    console.print(Panel(
-        f"[bold {color}]GMLP Compliance: {report.overall_compliance:.0%}[/bold {color}]\n\n"
-        f"Agent: [cyan]{report.agent_name}[/cyan]\n"
-        f"CAS: {report.cas_score:.3f} | Safety: {report.safety_score:.3f}\n"
-        f"Critical Violations: {report.critical_violations}",
-        title="FDA GMLP Compliance Report",
-    ))
+    color = (
+        "green"
+        if report.overall_compliance >= 0.7
+        else "yellow"
+        if report.overall_compliance >= 0.5
+        else "red"
+    )
+    console.print(
+        Panel(
+            f"[bold {color}]GMLP Compliance: {report.overall_compliance:.0%}[/bold {color}]\n\n"
+            f"Agent: [cyan]{report.agent_name}[/cyan]\n"
+            f"CAS: {report.cas_score:.3f} | Safety: {report.safety_score:.3f}\n"
+            f"Critical Violations: {report.critical_violations}",
+            title="FDA GMLP Compliance Report",
+        )
+    )
 
     # Principle table
     table = Table(title="GMLP Principle Assessment")
@@ -365,12 +391,14 @@ def _display_results(scores: object) -> None:
     # Overall score
     cas = scores.overall_cas
     color = "green" if cas >= 0.7 else "yellow" if cas >= 0.5 else "red"
-    console.print(Panel(
-        f"[bold {color}]ClinicalAgent Score (CAS): {cas:.3f}[/bold {color}]\n\n"
-        f"Agent: [cyan]{scores.agent_name}[/cyan]\n"
-        f"Scenarios: {scores.scored_scenarios}/{scores.total_scenarios}",
-        title="Benchmark Results",
-    ))
+    console.print(
+        Panel(
+            f"[bold {color}]ClinicalAgent Score (CAS): {cas:.3f}[/bold {color}]\n\n"
+            f"Agent: [cyan]{scores.agent_name}[/cyan]\n"
+            f"Scenarios: {scores.scored_scenarios}/{scores.total_scenarios}",
+            title="Benchmark Results",
+        )
+    )
 
     # Domain breakdown
     if scores.domain_breakdown:
@@ -387,20 +415,24 @@ def _display_results(scores: object) -> None:
     # Safety summary
     safety = scores.safety_summary
     if safety:
-        console.print(f"\n[bold]Safety:[/bold] {safety.get('total_violations', 0)} violations "
-                       f"/ {safety.get('total_constraints', 0)} constraints "
-                       f"(rate: {safety.get('violation_rate', 0):.1%})")
-        critical = safety.get('critical_violations', 0)
+        console.print(
+            f"\n[bold]Safety:[/bold] {safety.get('total_violations', 0)} violations "
+            f"/ {safety.get('total_constraints', 0)} constraints "
+            f"(rate: {safety.get('violation_rate', 0):.1%})"
+        )
+        critical = safety.get("critical_violations", 0)
         if critical > 0:
             console.print(f"  [red]Critical violations: {critical}[/red]")
 
     # Refusal summary
     refusal = scores.refusal_summary
     if refusal:
-        console.print(f"\n[bold]Refusal Accuracy:[/bold] "
-                       f"Precision={refusal.get('precision', 0):.3f} "
-                       f"Recall={refusal.get('recall', 0):.3f} "
-                       f"F1={refusal.get('f1', 0):.3f}")
+        console.print(
+            f"\n[bold]Refusal Accuracy:[/bold] "
+            f"Precision={refusal.get('precision', 0):.3f} "
+            f"Recall={refusal.get('recall', 0):.3f} "
+            f"F1={refusal.get('f1', 0):.3f}"
+        )
 
 
 if __name__ == "__main__":

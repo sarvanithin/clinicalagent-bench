@@ -113,9 +113,7 @@ class LiteLLMAgent(AgentAdapter):
                 error=f"litellm not installed: {e}",
             )
 
-        tools_text = "\n".join(
-            f"- {name}: {desc}" for name, desc in tool_descriptions.items()
-        )
+        tools_text = "\n".join(f"- {name}: {desc}" for name, desc in tool_descriptions.items())
         user_message = (
             f"## Patient Context\n{patient_context}\n\n"
             f"## Available Tools\n{tools_text}\n\n"
@@ -159,18 +157,24 @@ class LiteLLMAgent(AgentAdapter):
                 escalated = parsed.get("escalated", False)
                 escalation_reason = parsed.get("escalation_reason", "")
                 for act in parsed.get("actions", []):
-                    actions.append(AgentAction(
-                        action_type=ActionType.TOOL_CALL if act.get("tool") else ActionType.DECISION,
-                        tool_name=act.get("tool"),
-                        tool_args=act.get("args", {}),
-                        reasoning=act.get("reasoning", ""),
-                        confidence=parsed.get("confidence"),
-                    ))
+                    actions.append(
+                        AgentAction(
+                            action_type=ActionType.TOOL_CALL
+                            if act.get("tool")
+                            else ActionType.DECISION,
+                            tool_name=act.get("tool"),
+                            tool_args=act.get("args", {}),
+                            reasoning=act.get("reasoning", ""),
+                            confidence=parsed.get("confidence"),
+                        )
+                    )
         except json.JSONDecodeError:
-            actions.append(AgentAction(
-                action_type=ActionType.RESPONSE,
-                reasoning=content,
-            ))
+            actions.append(
+                AgentAction(
+                    action_type=ActionType.RESPONSE,
+                    reasoning=content,
+                )
+            )
             final_answer = {"raw_response": content}
 
         return AgentResponse(

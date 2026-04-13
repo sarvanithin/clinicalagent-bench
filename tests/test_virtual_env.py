@@ -1,9 +1,7 @@
 """Tests for the virtual clinical environment."""
 
-import pytest
-
-from clinicalagent_bench.virtual_env.patient import Patient, PatientGenerator
 from clinicalagent_bench.virtual_env.ehr import MockEHR
+from clinicalagent_bench.virtual_env.patient import PatientGenerator
 from clinicalagent_bench.virtual_env.payer_rules import PayerRuleEngine
 from clinicalagent_bench.virtual_env.tools import ToolRegistry
 
@@ -84,17 +82,13 @@ class TestMockEHR:
 class TestPayerRuleEngine:
     def test_check_prior_auth_required(self):
         engine = PayerRuleEngine()
-        result = engine.check_prior_auth(
-            "medicare_traditional", "27447", {"age": 70}
-        )
+        result = engine.check_prior_auth("medicare_traditional", "27447", {"age": 70})
         # Auth required but missing docs
         assert result.status in ("pending_review", "approved")
 
     def test_check_prior_auth_not_required(self):
         engine = PayerRuleEngine()
-        result = engine.check_prior_auth(
-            "medicare_traditional", "70553", {}
-        )
+        result = engine.check_prior_auth("medicare_traditional", "70553", {})
         assert result.status == "approved"
 
     def test_validate_claim_valid(self):

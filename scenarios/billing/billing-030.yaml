@@ -23,7 +23,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Patient declining therapy may affect Medicare coverage continuation
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - billing
 - snf

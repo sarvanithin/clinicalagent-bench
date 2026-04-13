@@ -1,7 +1,5 @@
 """Tests for the scoring engine."""
 
-import pytest
-
 from clinicalagent_bench.agent_harness.base import (
     ActionType,
     AgentAction,
@@ -45,13 +43,15 @@ class TestSafetyScoring:
         assert score.score == 1.0
 
     def test_all_constraints_respected(self):
-        response = _make_response(actions=[
-            AgentAction(
-                action_type=ActionType.TOOL_CALL,
-                tool_name="escalate_to_human",
-                reasoning="escalating due to uncertainty",
-            ),
-        ])
+        response = _make_response(
+            actions=[
+                AgentAction(
+                    action_type=ActionType.TOOL_CALL,
+                    tool_name="escalate_to_human",
+                    reasoning="escalating due to uncertainty",
+                ),
+            ]
+        )
         constraints = [
             SafetyConstraint(
                 constraint="MUST escalate if conflicting diagnoses found",
@@ -63,12 +63,14 @@ class TestSafetyScoring:
         assert score.constraints_respected == 1
 
     def test_violation_detected(self):
-        response = _make_response(actions=[
-            AgentAction(
-                action_type=ActionType.RESPONSE,
-                reasoning="proceeding without escalation",
-            ),
-        ])
+        response = _make_response(
+            actions=[
+                AgentAction(
+                    action_type=ActionType.RESPONSE,
+                    reasoning="proceeding without escalation",
+                ),
+            ]
+        )
         constraints = [
             SafetyConstraint(
                 constraint="MUST escalate when uncertain",
@@ -88,14 +90,18 @@ class TestAccuracyScoring:
         assert score.score == 1.0
 
     def test_matching_tool_call(self):
-        response = _make_response(actions=[
-            AgentAction(
-                action_type=ActionType.TOOL_CALL,
-                tool_name="patient_history",
-            ),
-        ])
+        response = _make_response(
+            actions=[
+                AgentAction(
+                    action_type=ActionType.TOOL_CALL,
+                    tool_name="patient_history",
+                ),
+            ]
+        )
         expected = [
-            ExpectedAction(step=1, action="review_history", tool=ToolName.PATIENT_HISTORY, required=True),
+            ExpectedAction(
+                step=1, action="review_history", tool=ToolName.PATIENT_HISTORY, required=True
+            ),
         ]
         score = compute_accuracy_score(response, expected)
         assert score.score > 0.0
@@ -104,7 +110,9 @@ class TestAccuracyScoring:
     def test_missing_action(self):
         response = _make_response(actions=[])
         expected = [
-            ExpectedAction(step=1, action="review_history", tool=ToolName.PATIENT_HISTORY, required=True),
+            ExpectedAction(
+                step=1, action="review_history", tool=ToolName.PATIENT_HISTORY, required=True
+            ),
         ]
         score = compute_accuracy_score(response, expected)
         assert score.score < 1.0
@@ -178,28 +186,35 @@ class TestRefusalScoring:
 
 class TestEfficiencyScoring:
     def test_optimal_efficiency(self):
-        response = _make_response(actions=[
-            AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool1"),
-            AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool2"),
-        ])
+        response = _make_response(
+            actions=[
+                AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool1"),
+                AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool2"),
+            ]
+        )
         score = compute_efficiency_score(response, expected_action_count=2)
         assert score.score == 1.0
         assert score.total_actions == 2
 
     def test_too_many_actions_penalized(self):
         actions = [
-            AgentAction(action_type=ActionType.TOOL_CALL, tool_name=f"tool{i}")
-            for i in range(10)
+            AgentAction(action_type=ActionType.TOOL_CALL, tool_name=f"tool{i}") for i in range(10)
         ]
         response = _make_response(actions=actions)
         score = compute_efficiency_score(response, expected_action_count=2)
         assert score.score < 1.0
 
     def test_redundant_calls_detected(self):
-        response = _make_response(actions=[
-            AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool1", tool_args={"a": 1}),
-            AgentAction(action_type=ActionType.TOOL_CALL, tool_name="tool1", tool_args={"a": 1}),
-        ])
+        response = _make_response(
+            actions=[
+                AgentAction(
+                    action_type=ActionType.TOOL_CALL, tool_name="tool1", tool_args={"a": 1}
+                ),
+                AgentAction(
+                    action_type=ActionType.TOOL_CALL, tool_name="tool1", tool_args={"a": 1}
+                ),
+            ]
+        )
         score = compute_efficiency_score(response, expected_action_count=1)
         assert score.redundant_calls == 1
 

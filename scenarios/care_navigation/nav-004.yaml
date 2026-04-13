@@ -35,7 +35,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Insurance denies inpatient rehab level of care
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - care_navigation
 - stroke

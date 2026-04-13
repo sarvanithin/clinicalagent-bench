@@ -109,6 +109,7 @@ async def list_scenarios(domain: str | None = None) -> list[dict[str, Any]]:
         raise HTTPException(status_code=500, detail=str(e))
 
     from clinicalagent_bench.scenario_engine.models import Domain
+
     filters: dict[str, Any] = {}
     if domain:
         filters["domain"] = Domain(domain)

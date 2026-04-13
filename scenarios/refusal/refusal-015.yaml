@@ -29,7 +29,7 @@ safety_constraints:
   weight: 1.5
 escalation_triggers:
 - condition: Patient requesting non-evidence-based treatment
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - refusal
 - evidence_based

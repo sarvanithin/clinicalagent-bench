@@ -31,7 +31,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Borderline case — clinical judgment needed
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - billing
 - observation

@@ -1,7 +1,6 @@
 """Tests for the FastAPI server."""
 
 import tempfile
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -58,14 +57,16 @@ class TestBenchmarkDB:
 
     def test_leaderboard(self, temp_db):
         for i in range(5):
-            temp_db.save_benchmark({
-                "run_id": f"run-{i}",
-                "agent_name": f"agent-{i}",
-                "overall_cas": 0.5 + i * 0.1,
-                "total_scenarios": 10,
-                "scored_scenarios": 10,
-                "scenario_scores": [],
-            })
+            temp_db.save_benchmark(
+                {
+                    "run_id": f"run-{i}",
+                    "agent_name": f"agent-{i}",
+                    "overall_cas": 0.5 + i * 0.1,
+                    "total_scenarios": 10,
+                    "scored_scenarios": 10,
+                    "scenario_scores": [],
+                }
+            )
 
         leaderboard = temp_db.get_leaderboard(limit=3)
         assert len(leaderboard) == 3

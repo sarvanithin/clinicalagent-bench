@@ -27,7 +27,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Progressive neurological deficit requiring urgent surgery
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - prior_auth
 - spinal_surgery

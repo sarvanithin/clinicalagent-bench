@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -226,11 +225,6 @@ class LLMJudgeEnsemble:
             final_score = 0.5
 
         agreement = 1.0 - (score_range / 1.0) if scores else 0.0
-
-        all_flags = []
-        for v in verdicts:
-            all_flags.extend(v.flags)
-        unique_flags = list(set(all_flags))
 
         reasoning_parts = [
             f"{v.judge_model}: {v.score:.2f} ({v.reasoning[:100]}...)"

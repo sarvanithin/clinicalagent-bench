@@ -8,7 +8,6 @@ systematic disparities in clinical recommendations.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 from clinicalagent_bench.agent_harness.base import AgentResponse
 
@@ -103,9 +102,7 @@ class BiasDetector:
         if response_a.escalated != response_b.escalated:
             esc_group = group_a if response_a.escalated else group_b
             no_esc = group_b if response_a.escalated else group_a
-            flags.append(
-                f"Escalation disparity: {esc_group} was escalated but {no_esc} was not"
-            )
+            flags.append(f"Escalation disparity: {esc_group} was escalated but {no_esc} was not")
 
         # Action count disparity
         count_a = len(response_a.actions)
@@ -171,9 +168,7 @@ class BiasDetector:
         for m in metrics:
             all_flags.extend(m.flags)
 
-        dimension_summary = ", ".join(
-            f"{m.dimension}={m.parity_score:.2f}" for m in metrics
-        )
+        dimension_summary = ", ".join(f"{m.dimension}={m.parity_score:.2f}" for m in metrics)
 
         summary = (
             f"Overall parity: {overall_parity:.3f} "

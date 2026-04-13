@@ -10,7 +10,6 @@ from __future__ import annotations
 import asyncio
 import time
 from dataclasses import dataclass, field
-from typing import Any
 
 from clinicalagent_bench.agent_harness.base import AgentAdapter, AgentResponse
 from clinicalagent_bench.scenario_engine.models import Scenario
@@ -93,8 +92,7 @@ class StressTestRunner:
         for iteration in range(self._config.repeat_count):
             semaphore = asyncio.Semaphore(self._config.concurrent_scenarios)
             tasks = [
-                self._run_with_semaphore(semaphore, scenario, iteration)
-                for scenario in scenarios
+                self._run_with_semaphore(semaphore, scenario, iteration) for scenario in scenarios
             ]
             batch_results = await asyncio.gather(*tasks)
             results.extend(batch_results)
@@ -111,9 +109,7 @@ class StressTestRunner:
         async with semaphore:
             return await self._run_scenario(scenario, iteration)
 
-    async def _run_scenario(
-        self, scenario: Scenario, iteration: int
-    ) -> StressResult:
+    async def _run_scenario(self, scenario: Scenario, iteration: int) -> StressResult:
         """Execute a single scenario with timeout, retry, and optional fault injection."""
         retries = 0
 
@@ -123,9 +119,10 @@ class StressTestRunner:
                 if self._config.inject_delays:
                     delay = (
                         self._config.delay_range_ms[0]
-                        + (hash(f"{scenario.scenario_id}-{iteration}-{retries}") % (
-                            self._config.delay_range_ms[1] - self._config.delay_range_ms[0]
-                        ))
+                        + (
+                            hash(f"{scenario.scenario_id}-{iteration}-{retries}")
+                            % (self._config.delay_range_ms[1] - self._config.delay_range_ms[0])
+                        )
                     ) / 1000.0
                     await asyncio.sleep(delay)
 
@@ -157,7 +154,7 @@ class StressTestRunner:
                     retries=retries,
                 )
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 latency = (time.monotonic() - start) * 1000
                 return StressResult(
                     scenario_id=scenario.scenario_id,
@@ -233,9 +230,7 @@ class StressTestRunner:
             summary=summary,
         )
 
-    def _compute_consistency(
-        self, results: list[StressResult], scenarios: list[Scenario]
-    ) -> float:
+    def _compute_consistency(self, results: list[StressResult], scenarios: list[Scenario]) -> float:
         """Compute consistency score by comparing outputs across iterations."""
         if not scenarios:
             return 1.0
@@ -243,7 +238,8 @@ class StressTestRunner:
         consistencies = []
         for scenario in scenarios:
             scenario_results = [
-                r for r in results
+                r
+                for r in results
                 if r.scenario_id == scenario.scenario_id and r.success and r.response
             ]
             if len(scenario_results) < 2:
@@ -251,8 +247,8 @@ class StressTestRunner:
 
             # Compare escalation decisions
             escalation_decisions = [r.response.escalated for r in scenario_results]
-            esc_consistency = (
-                escalation_decisions.count(escalation_decisions[0]) / len(escalation_decisions)
+            esc_consistency = escalation_decisions.count(escalation_decisions[0]) / len(
+                escalation_decisions
             )
 
             # Compare action counts
@@ -278,7 +274,9 @@ class StressTestRunner:
         first_iter = [r for r in results if r.iteration == iterations[0]]
         last_iter = [r for r in results if r.iteration == iterations[-1]]
 
-        first_success = sum(1 for r in first_iter if r.success) / len(first_iter) if first_iter else 1
+        first_success = (
+            sum(1 for r in first_iter if r.success) / len(first_iter) if first_iter else 1
+        )
         last_success = sum(1 for r in last_iter if r.success) / len(last_iter) if last_iter else 1
 
         return last_success < first_success * 0.8

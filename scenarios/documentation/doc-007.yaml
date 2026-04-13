@@ -32,7 +32,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Patient questions about consent or capacity concerns
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - documentation
 - informed_consent

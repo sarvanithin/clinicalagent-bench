@@ -34,7 +34,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Signs of cardiogenic shock or respiratory distress
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - clinical_reasoning
 - heart_failure

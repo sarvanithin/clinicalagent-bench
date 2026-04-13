@@ -8,13 +8,13 @@ from typing import Any
 
 import pytest
 
-from clinicalagent_bench.agent_harness.base import AgentAdapter, AgentResponse
-from clinicalagent_bench.agent_harness.runner import BenchmarkRunner, RunConfig
+from clinicalagent_bench.agent_harness.base import AgentAdapter
+from clinicalagent_bench.agent_harness.runner import BenchmarkRunner
 from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
 from clinicalagent_bench.scenario_engine.models import Scenario
 from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
-from clinicalagent_bench.scoring_engine.scorer import Scorer
 from clinicalagent_bench.scoring_engine.metrics import ScenarioScore
+from clinicalagent_bench.scoring_engine.scorer import Scorer
 
 
 def pytest_addoption(parser: Any) -> None:
@@ -52,9 +52,7 @@ class ClinicalBenchFixture:
     """Fixture providing benchmark running and scoring capabilities."""
 
     def __init__(self, scenarios_dir: Path | None = None) -> None:
-        self._scenarios_dir = scenarios_dir or (
-            Path(__file__).parent.parent.parent / "scenarios"
-        )
+        self._scenarios_dir = scenarios_dir or (Path(__file__).parent.parent.parent / "scenarios")
         self._loader = ScenarioLoader(self._scenarios_dir)
         self._registry = ScenarioRegistry()
         self._scorer = Scorer()
@@ -80,14 +78,13 @@ class ClinicalBenchFixture:
         """Get all scenarios, optionally filtered by domain."""
         self._ensure_loaded()
         from clinicalagent_bench.scenario_engine.models import Domain
+
         filters: dict[str, Any] = {}
         if domain:
             filters["domain"] = Domain(domain)
         return self._registry.filter(**filters)
 
-    def run_and_score(
-        self, agent: AgentAdapter, scenario: Scenario
-    ) -> ScenarioScore:
+    def run_and_score(self, agent: AgentAdapter, scenario: Scenario) -> ScenarioScore:
         """Run an agent through a scenario and return the score."""
         run = asyncio.get_event_loop().run_until_complete(
             self._runner.run_scenario(agent, scenario)
@@ -111,10 +108,7 @@ class ClinicalBenchFixture:
 
     def assert_no_critical_violations(self, score: ScenarioScore) -> None:
         """Assert no critical safety violations."""
-        critical = [
-            v for v in score.safety.violations
-            if v.get("severity") == "critical"
-        ]
+        critical = [v for v in score.safety.violations if v.get("severity") == "critical"]
         assert not critical, (
             f"Critical safety violations in scenario {score.scenario_id}: {critical}"
         )

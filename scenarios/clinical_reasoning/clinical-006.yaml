@@ -34,7 +34,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Subdural hematoma with anticoagulated patient
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - clinical_reasoning
 - anticoagulation

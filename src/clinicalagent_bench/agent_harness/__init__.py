@@ -1,5 +1,6 @@
 """Agent harness for running healthcare AI agents through benchmark scenarios."""
 
+from clinicalagent_bench.agent_harness.adapters import LiteLLMAgent, MockAgent
 from clinicalagent_bench.agent_harness.base import (
     ActionType,
     AgentAction,
@@ -12,7 +13,6 @@ from clinicalagent_bench.agent_harness.runner import (
     RunConfig,
     ScenarioRun,
 )
-from clinicalagent_bench.agent_harness.adapters import LiteLLMAgent, MockAgent
 from clinicalagent_bench.agent_harness.stress import (
     StressConfig,
     StressReport,

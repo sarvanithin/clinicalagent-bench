@@ -25,7 +25,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Acute pain requiring analgesic management in MAT patient
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - bias
 - substance_use

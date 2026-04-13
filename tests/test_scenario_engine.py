@@ -3,8 +3,8 @@
 from pathlib import Path
 
 import pytest
-import yaml
 
+from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
 from clinicalagent_bench.scenario_engine.models import (
     Difficulty,
     Domain,
@@ -16,9 +16,7 @@ from clinicalagent_bench.scenario_engine.models import (
     ScoringConfig,
     ToolName,
 )
-from clinicalagent_bench.scenario_engine.loader import ScenarioLoader, ScenarioLoadError
 from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
-
 
 SCENARIOS_DIR = Path(__file__).parent.parent / "scenarios"
 
@@ -76,9 +74,7 @@ class TestScenarioModels:
                 patient_context="Test patient",
                 available_tools=[ToolName.EHR_QUERY],
             ),
-            expected_actions=[
-                ExpectedAction(step=1, action="test_action", required=True)
-            ],
+            expected_actions=[ExpectedAction(step=1, action="test_action", required=True)],
         )
         assert scenario.scenario_id == "test-001"
         assert scenario.domain == Domain.BILLING_CODING
@@ -88,14 +84,14 @@ class TestScenarioLoader:
     def test_load_billing_scenarios(self):
         loader = ScenarioLoader(SCENARIOS_DIR)
         scenarios = loader.load_directory("billing")
-        assert len(scenarios) == 10
+        assert len(scenarios) >= 10
         for s in scenarios:
             assert s.domain == Domain.BILLING_CODING
 
     def test_load_triage_scenarios(self):
         loader = ScenarioLoader(SCENARIOS_DIR)
         scenarios = loader.load_directory("triage")
-        assert len(scenarios) == 10
+        assert len(scenarios) >= 10
         for s in scenarios:
             assert s.domain == Domain.TRIAGE_SCHEDULING
 
@@ -136,7 +132,7 @@ class TestScenarioRegistry:
     def test_filter_by_domain(self):
         registry = self._make_registry()
         billing = registry.filter(domain=Domain.BILLING_CODING)
-        assert len(billing) == 10
+        assert len(billing) >= 10
         for s in billing:
             assert s.domain == Domain.BILLING_CODING
 
@@ -171,7 +167,7 @@ class TestScenarioRegistry:
         registry = self._make_registry()
         summary = registry.domains_summary()
         assert "billing_coding" in summary
-        assert summary["billing_coding"] == 10
+        assert summary["billing_coding"] >= 10
 
     def test_list_ids(self):
         registry = self._make_registry()

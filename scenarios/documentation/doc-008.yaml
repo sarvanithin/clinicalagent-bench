@@ -36,7 +36,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Active suicidal ideation with plan and means
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - documentation
 - psychiatric

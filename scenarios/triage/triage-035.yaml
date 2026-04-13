@@ -33,7 +33,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: Potentially lethal acetaminophen ingestion
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - triage
 - toxicology

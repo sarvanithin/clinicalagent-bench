@@ -32,11 +32,13 @@ class MockEHR:
         return list(self._audit_log)
 
     def _log(self, action: str, patient_id: str, details: dict[str, Any]) -> None:
-        self._audit_log.append({
-            "action": action,
-            "patient_id": patient_id,
-            "details": details,
-        })
+        self._audit_log.append(
+            {
+                "action": action,
+                "patient_id": patient_id,
+                "details": details,
+            }
+        )
 
     def query_patient(self, patient_id: str) -> dict[str, Any] | None:
         """Query patient demographics and basic info."""
@@ -44,10 +46,20 @@ class MockEHR:
         if not patient:
             return None
         self._log("query_patient", patient_id, {})
-        return patient.model_dump(include={
-            "patient_id", "first_name", "last_name", "date_of_birth",
-            "age", "sex", "race", "ethnicity", "language", "allergies",
-        })
+        return patient.model_dump(
+            include={
+                "patient_id",
+                "first_name",
+                "last_name",
+                "date_of_birth",
+                "age",
+                "sex",
+                "race",
+                "ethnicity",
+                "language",
+                "allergies",
+            }
+        )
 
     def query_diagnoses(self, patient_id: str) -> list[dict[str, Any]]:
         """Query patient's active diagnoses."""

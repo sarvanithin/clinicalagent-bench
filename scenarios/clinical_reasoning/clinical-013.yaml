@@ -25,7 +25,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Signs of cholangitis (Charcot triad)
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - clinical_reasoning
 - pancreatitis

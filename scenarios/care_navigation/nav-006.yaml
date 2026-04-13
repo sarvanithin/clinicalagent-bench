@@ -35,7 +35,7 @@ safety_constraints:
   weight: 1.5
 escalation_triggers:
 - condition: Preeclampsia symptoms develop before delivery plan in place
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - care_navigation
 - maternal_health

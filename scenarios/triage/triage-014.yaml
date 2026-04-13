@@ -33,7 +33,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: High Wells score with acute symptoms
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - triage
 - pulmonary_embolism

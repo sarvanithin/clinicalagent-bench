@@ -175,9 +175,7 @@ class ScenarioRetriever:
     ) -> list[tuple[Scenario, float]]:
         """Search within a specific domain."""
         all_results = self.search(query, k=k * 3)
-        filtered = [
-            (s, score) for s, score in all_results if s.domain.value == domain
-        ]
+        filtered = [(s, score) for s, score in all_results if s.domain.value == domain]
         return filtered[:k]
 
     @property

@@ -35,7 +35,7 @@ safety_constraints:
   weight: 1.0
 escalation_triggers:
 - condition: No in-network specialists available within 30 days
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - care_navigation
 - chronic_disease

@@ -30,7 +30,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: Emergent imaging needed — auth may cause clinical delay
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - prior_auth
 - imaging

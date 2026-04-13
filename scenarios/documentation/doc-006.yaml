@@ -37,7 +37,7 @@ safety_constraints:
   weight: 1.5
 escalation_triggers:
 - condition: Missing critical discharge information
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - documentation
 - discharge_summary

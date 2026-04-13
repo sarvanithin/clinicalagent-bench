@@ -149,7 +149,9 @@ class ToolRegistry:
                 results.append({"code": code, "description": desc})
         return results
 
-    def _claim_submit(self, payer: str, codes: list[dict[str, str]], patient_age: int, **kw: Any) -> Any:
+    def _claim_submit(
+        self, payer: str, codes: list[dict[str, str]], patient_age: int, **kw: Any
+    ) -> Any:
         result = self._payer.validate_claim(payer, codes, patient_age)
         return result.model_dump()
 
@@ -179,17 +181,36 @@ class ToolRegistry:
         interactions = []
         for m in meds:
             if isinstance(m, dict) and m.get("name", "").lower() != medication.lower():
-                interactions.append({"drug": m["name"], "severity": "low", "description": "Monitor"})
+                interactions.append(
+                    {"drug": m["name"], "severity": "low", "description": "Monitor"}
+                )
         return {"medication": medication, "interactions": interactions, "covered": True}
 
     def _prescription_write(self, patient_id: str, prescription: dict[str, Any], **kw: Any) -> Any:
         return self._ehr.write_prescription(patient_id, prescription)
 
-    def _scheduling_query(self, provider_id: str = "", specialty: str = "", **kw: Any) -> list[dict[str, str]]:
+    def _scheduling_query(
+        self, provider_id: str = "", specialty: str = "", **kw: Any
+    ) -> list[dict[str, str]]:
         return [
-            {"slot_id": "S001", "date": "2026-04-15", "time": "09:00", "provider": provider_id or "Dr. Smith"},
-            {"slot_id": "S002", "date": "2026-04-15", "time": "14:00", "provider": provider_id or "Dr. Smith"},
-            {"slot_id": "S003", "date": "2026-04-16", "time": "10:30", "provider": provider_id or "Dr. Jones"},
+            {
+                "slot_id": "S001",
+                "date": "2026-04-15",
+                "time": "09:00",
+                "provider": provider_id or "Dr. Smith",
+            },
+            {
+                "slot_id": "S002",
+                "date": "2026-04-15",
+                "time": "14:00",
+                "provider": provider_id or "Dr. Smith",
+            },
+            {
+                "slot_id": "S003",
+                "date": "2026-04-16",
+                "time": "10:30",
+                "provider": provider_id or "Dr. Jones",
+            },
         ]
 
     def _scheduling_book(self, slot_id: str, patient_id: str, **kw: Any) -> dict[str, str]:
@@ -198,12 +219,26 @@ class ToolRegistry:
     def _referral_submit(self, patient_id: str, referral: dict[str, Any], **kw: Any) -> Any:
         return self._ehr.submit_referral(patient_id, referral)
 
-    def _provider_search(self, specialty: str = "", location: str = "", **kw: Any) -> list[dict[str, Any]]:
+    def _provider_search(
+        self, specialty: str = "", location: str = "", **kw: Any
+    ) -> list[dict[str, Any]]:
         return [
-            {"provider_id": "PRV001", "name": "Dr. Sarah Chen", "specialty": specialty or "Internal Medicine",
-             "distance_miles": 2.1, "rating": 4.8, "accepting_new": True},
-            {"provider_id": "PRV002", "name": "Dr. James Wilson", "specialty": specialty or "Internal Medicine",
-             "distance_miles": 5.3, "rating": 4.5, "accepting_new": True},
+            {
+                "provider_id": "PRV001",
+                "name": "Dr. Sarah Chen",
+                "specialty": specialty or "Internal Medicine",
+                "distance_miles": 2.1,
+                "rating": 4.8,
+                "accepting_new": True,
+            },
+            {
+                "provider_id": "PRV002",
+                "name": "Dr. James Wilson",
+                "specialty": specialty or "Internal Medicine",
+                "distance_miles": 5.3,
+                "rating": 4.5,
+                "accepting_new": True,
+            },
         ]
 
     def _patient_history(self, patient_id: str, **kw: Any) -> dict[str, Any]:
@@ -224,7 +259,13 @@ class ToolRegistry:
             return {"verified": False, "reason": "No insurance on file"}
         return {"verified": True, "insurance": info, "eligible": True}
 
-    def _documentation_generate(self, template: str, patient_id: str, encounter_data: dict[str, Any] | None = None, **kw: Any) -> dict[str, str]:
+    def _documentation_generate(
+        self,
+        template: str,
+        patient_id: str,
+        encounter_data: dict[str, Any] | None = None,
+        **kw: Any,
+    ) -> dict[str, str]:
         return {
             "document_id": f"DOC-{patient_id}-{template}",
             "template": template,
@@ -232,7 +273,9 @@ class ToolRegistry:
             "content": f"[Generated {template} documentation for patient {patient_id}]",
         }
 
-    def _escalate_to_human(self, reason: str, urgency: str = "normal", context: dict[str, Any] | None = None, **kw: Any) -> dict[str, str]:
+    def _escalate_to_human(
+        self, reason: str, urgency: str = "normal", context: dict[str, Any] | None = None, **kw: Any
+    ) -> dict[str, str]:
         return {
             "escalation_id": f"ESC-{len(self._call_log)}",
             "status": "escalated",

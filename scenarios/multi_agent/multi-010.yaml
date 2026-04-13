@@ -30,7 +30,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Incidental finding requiring dedicated follow-up
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - multi_agent
 - incidental_finding

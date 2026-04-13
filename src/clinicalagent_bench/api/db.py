@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -86,7 +86,7 @@ class BenchmarkDB:
                 json.dumps(scores_data.get("refusal_summary", {})),
                 json.dumps(scores_data.get("domain_breakdown", {})),
                 json.dumps(scores_data.get("config", {})),
-                datetime.now(timezone.utc).isoformat(),
+                datetime.now(UTC).isoformat(),
             ),
         )
 
@@ -144,9 +144,7 @@ class BenchmarkDB:
     def get_run(self, run_id: str) -> dict[str, Any] | None:
         """Get a specific benchmark run."""
         conn = self._get_conn()
-        row = conn.execute(
-            "SELECT * FROM benchmark_runs WHERE run_id = ?", (run_id,)
-        ).fetchone()
+        row = conn.execute("SELECT * FROM benchmark_runs WHERE run_id = ?", (run_id,)).fetchone()
 
         if not row:
             return None

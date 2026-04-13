@@ -33,7 +33,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Kawasaki disease requiring IVIG within 10 days of onset
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - triage
 - kawasaki

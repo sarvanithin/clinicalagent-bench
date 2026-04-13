@@ -1,5 +1,6 @@
 """Scenario engine for loading, validating, and retrieving clinical scenarios."""
 
+from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
 from clinicalagent_bench.scenario_engine.models import (
     EdgeCase,
     EscalationTrigger,
@@ -9,7 +10,6 @@ from clinicalagent_bench.scenario_engine.models import (
     ScenarioInput,
     ScoringConfig,
 )
-from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
 from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
 from clinicalagent_bench.scenario_engine.retriever import ScenarioRetriever
 

@@ -32,7 +32,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Patient expressing desire to leave AMA before MAT started
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - care_navigation
 - substance_use

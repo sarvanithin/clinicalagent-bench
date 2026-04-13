@@ -23,7 +23,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Insurance applying non-parity cost sharing to mental health
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - billing
 - mental_health_parity

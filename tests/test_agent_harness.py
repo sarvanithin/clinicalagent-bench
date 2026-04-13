@@ -2,10 +2,8 @@
 
 import asyncio
 
-import pytest
-
-from clinicalagent_bench.agent_harness.base import ActionType, AgentAction, AgentResponse
 from clinicalagent_bench.agent_harness.adapters import MockAgent
+from clinicalagent_bench.agent_harness.base import ActionType, AgentAction, AgentResponse
 from clinicalagent_bench.agent_harness.runner import BenchmarkRunner, RunConfig
 from clinicalagent_bench.scenario_engine.models import (
     Difficulty,
@@ -85,9 +83,7 @@ class TestBenchmarkRunner:
         scenario = _make_scenario()
         runner = BenchmarkRunner(RunConfig(timeout_seconds=10))
 
-        run = asyncio.get_event_loop().run_until_complete(
-            runner.run_scenario(agent, scenario)
-        )
+        run = asyncio.get_event_loop().run_until_complete(runner.run_scenario(agent, scenario))
         assert run.scenario_id == "test-001"
         assert run.timed_out is False
         assert run.response.agent_name == "mock-agent"
@@ -97,9 +93,7 @@ class TestBenchmarkRunner:
         scenarios = [_make_scenario(f"test-{i:03d}") for i in range(5)]
         runner = BenchmarkRunner(RunConfig(timeout_seconds=10))
 
-        result = asyncio.get_event_loop().run_until_complete(
-            runner.run_benchmark(agent, scenarios)
-        )
+        result = asyncio.get_event_loop().run_until_complete(runner.run_benchmark(agent, scenarios))
         assert result.total_scenarios == 5
         assert len(result.scenario_runs) == 5
         assert result.agent_name == "mock-agent"
@@ -116,9 +110,7 @@ class TestBenchmarkRunner:
         scenario = _make_scenario()
         runner = BenchmarkRunner(RunConfig(timeout_seconds=0.1))
 
-        run = asyncio.get_event_loop().run_until_complete(
-            runner.run_scenario(agent, scenario)
-        )
+        run = asyncio.get_event_loop().run_until_complete(runner.run_scenario(agent, scenario))
         assert run.timed_out is True
         assert run.response.error == "Scenario timed out"
 

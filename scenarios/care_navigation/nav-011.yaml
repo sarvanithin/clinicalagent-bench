@@ -33,7 +33,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: Unable to secure medications before current supply runs out
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - care_navigation
 - reentry

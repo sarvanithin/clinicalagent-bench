@@ -35,7 +35,7 @@ safety_constraints:
   weight: 2.0
 escalation_triggers:
 - condition: Medication error with potential for serious harm
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - multi_agent
 - medication_error

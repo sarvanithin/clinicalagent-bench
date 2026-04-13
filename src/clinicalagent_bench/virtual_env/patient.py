@@ -67,14 +67,48 @@ class PatientGenerator:
     """Generates synthetic patient data for benchmark scenarios."""
 
     FIRST_NAMES = [
-        "James", "Maria", "Robert", "Jennifer", "Michael", "Linda", "David",
-        "Patricia", "William", "Elizabeth", "Chen", "Aisha", "Raj", "Fatima",
-        "Hiroshi", "Olga", "Ahmed", "Priya", "Carlos", "Yuki",
+        "James",
+        "Maria",
+        "Robert",
+        "Jennifer",
+        "Michael",
+        "Linda",
+        "David",
+        "Patricia",
+        "William",
+        "Elizabeth",
+        "Chen",
+        "Aisha",
+        "Raj",
+        "Fatima",
+        "Hiroshi",
+        "Olga",
+        "Ahmed",
+        "Priya",
+        "Carlos",
+        "Yuki",
     ]
     LAST_NAMES = [
-        "Smith", "Garcia", "Johnson", "Williams", "Brown", "Jones", "Miller",
-        "Davis", "Rodriguez", "Martinez", "Patel", "Kim", "Nguyen", "Chen",
-        "Ali", "Singh", "Tanaka", "Ivanova", "Okafor", "Müller",
+        "Smith",
+        "Garcia",
+        "Johnson",
+        "Williams",
+        "Brown",
+        "Jones",
+        "Miller",
+        "Davis",
+        "Rodriguez",
+        "Martinez",
+        "Patel",
+        "Kim",
+        "Nguyen",
+        "Chen",
+        "Ali",
+        "Singh",
+        "Tanaka",
+        "Ivanova",
+        "Okafor",
+        "Müller",
     ]
     COMMON_DIAGNOSES = [
         ("E11.9", "Type 2 diabetes mellitus without complications"),
@@ -137,9 +171,7 @@ class PatientGenerator:
             Diagnosis(
                 icd10_code=code,
                 description=desc,
-                date_diagnosed=str(
-                    date.today() - timedelta(days=self._rng.randint(30, 1825))
-                ),
+                date_diagnosed=str(date.today() - timedelta(days=self._rng.randint(30, 1825))),
             )
             for code, desc in dx_samples
         ]
@@ -153,9 +185,7 @@ class PatientGenerator:
                 name=name,
                 dosage=dose,
                 frequency=freq,
-                start_date=str(
-                    date.today() - timedelta(days=self._rng.randint(30, 365))
-                ),
+                start_date=str(date.today() - timedelta(days=self._rng.randint(30, 365))),
                 prescriber=f"Dr. {self._rng.choice(self.LAST_NAMES)}",
             )
             for name, dose, freq in med_samples
@@ -169,15 +199,23 @@ class PatientGenerator:
             "date_of_birth": str(dob),
             "age": age,
             "sex": sex,
-            "race": self._rng.choice([
-                "White", "Black", "Asian", "Hispanic", "Native American", "Pacific Islander",
-            ]),
+            "race": self._rng.choice(
+                [
+                    "White",
+                    "Black",
+                    "Asian",
+                    "Hispanic",
+                    "Native American",
+                    "Pacific Islander",
+                ]
+            ),
             "ethnicity": self._rng.choice(["Hispanic", "Non-Hispanic"]),
             "insurance": insurance,
             "medications": medications,
             "diagnoses": diagnoses,
             "allergies": self._rng.sample(
-                ["Penicillin", "Sulfa", "Latex", "Iodine", "NSAIDs", "None"], k=self._rng.randint(0, 2)
+                ["Penicillin", "Sulfa", "Latex", "Iodine", "NSAIDs", "None"],
+                k=self._rng.randint(0, 2),
             ),
             "vitals": {
                 "bp_systolic": self._rng.randint(100, 180),

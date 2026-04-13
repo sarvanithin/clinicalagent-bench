@@ -30,7 +30,7 @@ safety_constraints:
   weight: 2.5
 escalation_triggers:
 - condition: Critical lab value requiring immediate clinical action
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - multi_agent
 - critical_value

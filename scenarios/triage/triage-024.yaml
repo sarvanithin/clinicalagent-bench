@@ -25,7 +25,7 @@ safety_constraints:
   weight: 3.0
 escalation_triggers:
 - condition: CRAO with potential salvage window
-  action: escalate_to_human
+  expected_action: escalate_to_human
 tags:
 - triage
 - vision_loss
