@@ -35,7 +35,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Validate scenarios
-        run: python -c "from clinicalagent_bench.scenario_engine import ScenarioLoader; loader = ScenarioLoader(); scenarios = loader.load_directory('scenarios'); print(f'Validated {len(scenarios)} scenarios')"
+        run: python -c "from clinicalagent_bench.scenario_engine import ScenarioLoader; loader = ScenarioLoader('scenarios'); scenarios = loader.load_directory(); print(f'Validated {len(scenarios)} scenarios')"
 
       - name: Run tests
         run: pytest tests/ -v --tb=short
