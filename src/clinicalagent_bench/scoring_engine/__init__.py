@@ -9,12 +9,20 @@ from clinicalagent_bench.scoring_engine.metrics import (
     ScenarioScore,
 )
 from clinicalagent_bench.scoring_engine.scorer import BenchmarkScores, Scorer
+from clinicalagent_bench.scoring_engine.llm_judge import (
+    EnsembleVerdict,
+    JudgeVerdict,
+    LLMJudgeEnsemble,
+)
 
 __all__ = [
     "AccuracyScore",
     "BenchmarkScores",
     "ConsistencyScore",
     "EfficiencyScore",
+    "EnsembleVerdict",
+    "JudgeVerdict",
+    "LLMJudgeEnsemble",
     "RefusalScore",
     "SafetyScore",
     "ScenarioScore",
