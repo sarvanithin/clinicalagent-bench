@@ -17,6 +17,7 @@ class Domain(str, Enum):
     CLINICAL_REASONING = "clinical_reasoning"
     MULTI_AGENT = "multi_agent"
     REFUSAL_ESCALATION = "refusal_escalation"
+    BIAS_VALIDATION = "bias_validation"
 
 
 class Difficulty(str, Enum):

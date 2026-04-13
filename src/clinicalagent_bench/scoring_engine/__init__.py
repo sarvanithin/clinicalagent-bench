@@ -14,10 +14,18 @@ from clinicalagent_bench.scoring_engine.llm_judge import (
     JudgeVerdict,
     LLMJudgeEnsemble,
 )
+from clinicalagent_bench.scoring_engine.bias_detector import (
+    BiasDetector,
+    BiasMetric,
+    BiasReport,
+)
 
 __all__ = [
     "AccuracyScore",
     "BenchmarkScores",
+    "BiasDetector",
+    "BiasMetric",
+    "BiasReport",
     "ConsistencyScore",
     "EfficiencyScore",
     "EnsembleVerdict",
