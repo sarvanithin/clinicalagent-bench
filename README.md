@@ -2,11 +2,12 @@
 
 **The open-source evaluation framework for healthcare AI agents.**
 
-ClinicalAgent-Bench tests autonomous healthcare AI agents against realistic clinical scenarios across billing, triage, documentation, prior authorization, care navigation, and clinical reasoning. Think "SWE-bench but for healthcare operations."
+ClinicalAgent-Bench tests autonomous healthcare AI agents against realistic clinical scenarios across billing, triage, documentation, prior authorization, care navigation, clinical reasoning, bias validation, and multi-agent coordination. Think "SWE-bench but for healthcare operations."
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-79%20passing-brightgreen.svg)]()
+[![Scenarios](https://img.shields.io/badge/scenarios-201-brightgreen.svg)]()
+[![Domains](https://img.shields.io/badge/domains-9-blue.svg)]()
 
 ---
 
@@ -17,6 +18,7 @@ Every healthcare AI company faces the same unsolved problem: **how do you know y
 - Healthcare LLMs hallucinate in ~15% of documents
 - Multi-agent coordination fails silently
 - Triage escalation thresholds are poorly calibrated
+- Demographic bias in clinical decisions goes undetected
 - No standardized benchmark exists for healthcare agent reliability
 
 Existing benchmarks like [MedAgentBench](https://github.com/stanfordmlgroup/MedAgentBench) (Stanford) test clinical EHR tasks only. [HealthBench](https://openai.com/index/healthbench/) (OpenAI) tests Q&A, not agentic workflows. **Nobody tests operational healthcare agents** — the billing, triage, prior auth, and documentation workflows that companies actually build.
@@ -29,11 +31,14 @@ ClinicalAgent-Bench fills that gap.
 |---|---|---|---|
 | **Scope** | Clinical EHR tasks | Medical Q&A | Full operations stack |
 | **Agentic** | Yes (tool-calling) | No (conversation) | Yes (multi-step, multi-tool) |
-| **Domains** | Clinical only | 26 specialties (Q&A) | 8 operational domains |
+| **Domains** | Clinical only | 26 specialties (Q&A) | 9 operational domains |
+| **Scenarios** | ~100 | ~5,000 Q&A pairs | 201 agentic scenarios |
 | **Refusal Testing** | Not measured | Not measured | First-class metric (F1) |
-| **Multi-Agent** | Single agent | Single agent | Coordination testing |
+| **Bias Validation** | None | None | 15 demographic equity scenarios |
+| **Multi-Agent** | Single agent | Single agent | Coordination + stress testing |
 | **Payer Rules** | None | None | Configurable rule engine |
-| **CI/CD** | Manual | Manual | pytest plugin + CLI |
+| **Compliance** | None | None | FDA GMLP reporting |
+| **CI/CD** | Manual | Manual | pytest plugin + CLI + GitHub Actions |
 
 ---
 
@@ -60,19 +65,20 @@ cab validate
 ```
 
 ```
-All 42 scenarios valid across 8 domains.
-┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
-┃ Domain             ┃ Count ┃
-┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
-│ billing            │    10 │
-│ triage             │    10 │
-│ documentation      │     5 │
-│ prior_auth         │     5 │
-│ refusal            │     5 │
-│ care_navigation    │     3 │
-│ clinical_reasoning │     2 │
-│ multi_agent        │     2 │
-└────────────────────┴───────┘
+All 201 scenarios valid across 9 domains.
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Domain               ┃ Count ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ billing_coding       │    41 │
+│ triage_scheduling    │    40 │
+│ clinical_documentation│   21 │
+│ prior_authorization  │    20 │
+│ care_navigation      │    16 │
+│ clinical_reasoning   │    17 │
+│ multi_agent          │    15 │
+│ refusal_escalation   │    16 │
+│ bias_validation      │    15 │
+└──────────────────────┴───────┘
 ```
 
 ### List Scenarios
@@ -130,6 +136,16 @@ cab run --model gpt-4o --parallel 4 --timeout 60
 cab score results.json
 ```
 
+### Generate Compliance Report
+
+```bash
+# FDA GMLP compliance report
+cab compliance results.json --output compliance.json --markdown
+
+# With agent metadata
+cab compliance results.json --agent-name "MyAgent" --model "gpt-4o"
+```
+
 ---
 
 ## Scoring: ClinicalAgent Score (CAS)
@@ -158,33 +174,45 @@ This is the **#1 concern** for healthcare AI deployment and nobody else measures
 
 A healthcare agent that never escalates is dangerous. One that always escalates is useless. CAS measures the balance.
 
+### LLM-as-Judge Ensemble
+
+For subjective evaluations (clinical reasoning quality, documentation completeness), ClinicalAgent-Bench uses a **3-judge ensemble** with tiebreaker:
+
+- **Default judges**: GPT-4o, Claude Sonnet, Gemini Flash
+- **Tiebreaker**: Activated when judge scores disagree beyond a threshold
+- **Confidence-weighted**: Scores aggregated by each judge's stated confidence
+- **Three evaluation types**: Clinical accuracy, documentation quality, escalation appropriateness
+
 ---
 
-## Scenario Domains
+## Scenario Domains (9 domains, 201 scenarios)
 
-### Billing & Coding (10 scenarios)
-CPT/ICD-10 code validation, E&M level selection, modifier application, bundling rules, upcoding detection, claim denial prediction, telehealth coding, pediatric vaccines, dual-eligible coordination.
+### Billing & Coding (41 scenarios)
+CPT/ICD-10 code validation, E&M level selection, modifier application (25, 24, 26, 59), bundling rules, upcoding detection, claim denial prediction, telehealth coding, pediatric vaccines, dual-eligible coordination, critical care time coding, observation vs inpatient status, global period management, anesthesia billing, infusion hierarchy, NCCI edits, split/shared visits, chronic care management, and more.
 
-### Triage & Scheduling (10 scenarios)
-Emergency triage (chest pain, stroke, cauda equina), pediatric fever assessment, mental health crisis, post-surgical complications, drug interaction checks, appointment coordination, over-triage prevention.
+### Triage & Scheduling (40 scenarios)
+Emergency triage (chest pain, stroke, cauda equina, aortic dissection), pediatric emergencies (fever, appendicitis, intussusception, Kawasaki disease, non-accidental trauma), obstetric emergencies (ectopic pregnancy, preeclampsia, postpartum hemorrhage, placental abruption), medical emergencies (DKA, PE, meningitis, sepsis, anaphylaxis, tension pneumothorax), toxicology (acetaminophen OD, CO poisoning, serotonin syndrome), and over-triage prevention.
 
-### Clinical Documentation (5 scenarios)
-OASIS assessment, medication reconciliation, SOAP progress notes, surgical consent verification, referral letter generation.
+### Clinical Documentation (21 scenarios)
+OASIS assessment, medication reconciliation, SOAP progress notes, surgical consent, referral letters, discharge summaries, operative reports, ICU transfer notes, psychiatric holds, workers comp reports, advance directives, death certificates, clinical trial screening, telehealth documentation, AMA documentation, restraint orders, peer review, and CDS override documentation.
 
-### Prior Authorization (5 scenarios)
-Knee replacement auth, appeal after denial, cross-payer rule comparison, urgent chemotherapy auth, step therapy navigation.
+### Prior Authorization (20 scenarios)
+Knee replacement, appeal after denial, cross-payer rules, urgent chemotherapy, step therapy, biologics, imaging urgency, DME, genetic testing, specialty drugs, physical therapy, bariatric surgery, cardiac cath, home health, spinal surgery, compound medications, growth hormone, PET scans, sleep studies, and ambulance transport.
 
-### Refusal & Escalation (5 scenarios)
-Refusing dosage changes outside scope, refusing diagnosis without examination, refusing allergy alert overrides, refusing controlled substance refills, correctly NOT escalating routine requests.
+### Refusal & Escalation (16 scenarios)
+Refusing dosage changes outside scope, refusing diagnosis without examination, refusing allergy alert overrides, refusing controlled substance refills, correctly NOT escalating routine requests, refusing portal diagnoses, refusing surgical clearance without current data, refusing benzodiazepine early refills, and refusing non-evidence-based prescriptions.
 
-### Care Navigation (3 scenarios)
-Cost-optimized provider recommendation, hospital-to-SNF care transition, second opinion coordination.
+### Care Navigation (16 scenarios)
+Cost-optimized provider recommendation, hospital-to-SNF care transition, second opinion coordination, post-stroke rehabilitation, chronic disease management, maternal health navigation, pediatric developmental delay, substance use disorder MAT coordination, rare disease referral, palliative-to-hospice transition, post-incarceration healthcare linkage, transplant evaluation, LGBTQ+ affirming care, NICU graduate follow-up, international patient coordination, and refugee healthcare orientation.
 
-### Clinical Reasoning (2 scenarios)
-Diabetic foot ulcer assessment, abnormal lab interpretation.
+### Clinical Reasoning (17 scenarios)
+Diabetic foot ulcer assessment, abnormal lab interpretation, acute kidney injury differential, thyroid nodule risk stratification, heart failure exacerbation, anticoagulation reversal, hyponatremia workup, adrenal crisis recognition, variceal bleed management, serotonin syndrome, iron deficiency vs chronic disease anemia, Cushing workup, gallstone pancreatitis, lupus nephritis, PFT interpretation, pediatric DKA cerebral edema, and QT prolongation risk.
 
-### Multi-Agent Coordination (2 scenarios)
-Billing-documentation consistency checking, prior auth and scheduling coordination.
+### Multi-Agent Coordination (15 scenarios)
+Billing-documentation consistency, prior auth and scheduling coordination, concurrent medication reconciliation, ED shift handoff, parallel workflow stress tests, critical value communication, organ transplant coordination, mass casualty triage, behavioral health integration, incidental finding management, insulin order verification, blood transfusion verification, code blue ACLS coordination, stroke alert door-to-needle time, and medication error recovery.
+
+### Bias Validation (15 scenarios)
+Race-neutral pain assessment, gender equity in cardiac evaluation, language barrier triage quality, socioeconomic equity in emergency care, age equity in treatment recommendations, weight bias in dyspnea workup, psychiatric history bias, disability accommodation, rural vs urban access equity, veteran PTSD pain management, substance use history equity, immigration status emergency care, homelessness comprehensive care, religious belief accommodation, and health literacy adaptation.
 
 ---
 
@@ -288,6 +316,79 @@ class LangChainAdapter(AgentAdapter):
 
 ---
 
+## Stress Testing
+
+Run multi-agent scenarios under adverse conditions:
+
+```python
+from clinicalagent_bench.agent_harness import StressTestRunner, StressConfig
+
+config = StressConfig(
+    concurrent_scenarios=10,
+    timeout_seconds=120,
+    inject_delays=True,
+    inject_failures=True,
+    failure_rate=0.1,
+    repeat_count=5,
+)
+
+runner = StressTestRunner(agent, config=config)
+report = await runner.run(multi_agent_scenarios)
+
+print(f"Success rate: {report.successful}/{report.total_executions}")
+print(f"P95 latency: {report.p95_latency_ms:.0f}ms")
+print(f"Consistency: {report.consistency_score:.2f}")
+print(f"Degradation: {'Yes' if report.degradation_detected else 'No'}")
+```
+
+---
+
+## Bias Detection
+
+Evaluate demographic equity across paired scenarios:
+
+```python
+from clinicalagent_bench.scoring_engine import BiasDetector
+
+detector = BiasDetector(disparity_threshold=0.15)
+
+metric = detector.evaluate_pair(
+    response_a=response_black_patient,
+    response_b=response_white_patient,
+    score_a=0.85,
+    score_b=0.92,
+    dimension="race",
+    group_a="Black",
+    group_b="White",
+)
+
+report = detector.generate_report([metric], pass_threshold=0.85)
+print(f"Parity: {report.overall_parity:.3f} — {'PASS' if report.passed else 'FAIL'}")
+```
+
+---
+
+## FDA GMLP Compliance Reporting
+
+Generate regulatory-aligned reports mapping benchmark results to FDA's 10 Good Machine Learning Practice principles:
+
+```python
+from clinicalagent_bench.scoring_engine import GMLPComplianceReporter
+
+reporter = GMLPComplianceReporter()
+report = reporter.generate(benchmark_scores, agent_name="MyAgent", model="gpt-4o")
+
+# Export as JSON for regulatory submission
+reporter.export_json(report, "gmlp_report.json")
+
+# Export as Markdown for human review
+md = reporter.export_markdown(report)
+```
+
+Each principle receives a **PASS / PARTIAL / FAIL** assessment with evidence, gaps, and recommendations.
+
+---
+
 ## pytest Integration
 
 ClinicalAgent-Bench ships as a pytest plugin for CI/CD:
@@ -321,6 +422,26 @@ pytest --cab-scenarios ./scenarios --cab-min-cas 0.7 --cab-min-safety 0.9
 
 ---
 
+## Leaderboard Dashboard
+
+A Next.js dashboard for visualizing benchmark results:
+
+```bash
+cd dashboard
+npm install
+npm run dev
+```
+
+Features:
+- Agent rankings with CAS score breakdown
+- Domain radar chart showing per-domain performance
+- Side-by-side agent comparison
+- Score breakdown with CAS weight visualization
+- Live API integration with demo fallback
+- Connects to the FastAPI backend at `localhost:8000`
+
+---
+
 ## API Server
 
 Start the leaderboard server:
@@ -349,8 +470,10 @@ uvicorn clinicalagent_bench.api.server:app --reload
 Agents interact with a simulated clinical environment during benchmarks:
 
 - **Mock EHR** — FHIR-compliant patient records (100 synthetic patients with demographics, diagnoses, medications, vitals, encounters)
+- **Synthea Integration** — Import Synthea-generated FHIR Bundles for large-scale patient cohorts (thousands of patients)
 - **Payer Rule Engine** — Configurable rules for Medicare, Medicaid, UnitedHealthcare, Aetna, Cigna, BCBS (prior auth requirements, claim validation, bundling rules, age restrictions)
 - **21 Simulated Tools** — `ehr_query`, `cpt_lookup`, `icd10_search`, `claim_submit`, `prior_auth_submit`, `pharmacy_check`, `scheduling_book`, `escalate_to_human`, and more
+- **FAISS Semantic Retrieval** — Find related scenarios by natural language query using vector similarity search
 
 All tool calls are logged and scored. The environment uses 100% synthetic data — zero HIPAA concerns.
 
@@ -361,24 +484,45 @@ All tool calls are logged and scored. The environment uses 100% synthetic data �
 ```
 clinicalagent-bench/
 ├── src/clinicalagent_bench/
-│   ├── scenario_engine/     # Scenario schema, YAML loader, registry
-│   ├── virtual_env/         # Mock EHR, payer rules, 21 tools
-│   ├── agent_harness/       # Adapter pattern, benchmark runner
-│   ├── scoring_engine/      # CAS score, safety/refusal/accuracy metrics
+│   ├── scenario_engine/     # Scenario schema, YAML loader, registry, FAISS retriever
+│   ├── virtual_env/         # Mock EHR, payer rules, 21 tools, Synthea importer
+│   ├── agent_harness/       # Adapter pattern, benchmark runner, stress tester
+│   ├── scoring_engine/      # CAS score, safety/refusal/accuracy metrics,
+│   │                        #   LLM judge ensemble, bias detector, GMLP compliance
 │   ├── api/                 # FastAPI leaderboard server
 │   ├── cli/                 # Click CLI (cab command)
 │   └── pytest_plugin.py     # CI/CD integration
-├── scenarios/               # 42 YAML scenarios across 8 domains
-│   ├── billing/
-│   ├── triage/
-│   ├── documentation/
-│   ├── prior_auth/
-│   ├── refusal/
-│   ├── care_navigation/
-│   ├── clinical_reasoning/
-│   └── multi_agent/
-└── tests/                   # 79 tests
+├── dashboard/               # Next.js leaderboard UI
+├── scenarios/               # 201 YAML scenarios across 9 domains
+│   ├── billing/             # 41 scenarios
+│   ├── triage/              # 40 scenarios
+│   ├── documentation/       # 21 scenarios
+│   ├── prior_auth/          # 20 scenarios
+│   ├── care_navigation/     # 16 scenarios
+│   ├── clinical_reasoning/  # 17 scenarios
+│   ├── multi_agent/         # 15 scenarios
+│   ├── refusal/             # 16 scenarios
+│   └── bias_validation/     # 15 scenarios
+├── scripts/                 # Scenario generators
+├── .github/workflows/       # CI + automated benchmarking
+└── tests/                   # Test suite
 ```
+
+---
+
+## GitHub Actions
+
+### CI (runs on every push/PR)
+- Tests on Python 3.11 and 3.12
+- Scenario validation
+- Linting with ruff
+- Coverage reporting
+
+### Automated Benchmarking
+- Manual dispatch with configurable model, domain, parallelism
+- Weekly scheduled runs (Sundays at midnight UTC)
+- Safety threshold gate (fails if safety < 0.8)
+- Results uploaded as artifacts
 
 ---
 
@@ -391,6 +535,7 @@ We welcome contributions, especially:
 - **Payer rules** — More realistic and comprehensive payer rule configurations.
 - **Domain expansion** — Clinical trials matching, referral management, population health.
 - **Scoring improvements** — Better LLM-as-judge prompts, clinical equivalence tables.
+- **Bias scenarios** — Additional demographic dimensions and intersectional testing.
 
 ### Development Setup
 
@@ -413,20 +558,6 @@ pytest --cov=clinicalagent_bench
 # Specific module
 pytest tests/test_scoring_engine.py -v
 ```
-
----
-
-## Roadmap
-
-- [ ] Expand to 200+ scenarios across all domains
-- [ ] FAISS semantic scenario retrieval
-- [ ] LLM-as-judge ensemble for subjective evaluations
-- [ ] Next.js leaderboard dashboard
-- [ ] Synthea integration for larger synthetic patient cohorts
-- [ ] Population bias validation scenarios
-- [ ] Multi-agent coordination stress tests
-- [ ] GitHub Actions workflow for automated benchmarking
-- [ ] Compliance reporting aligned with FDA GMLP principles
 
 ---
 
