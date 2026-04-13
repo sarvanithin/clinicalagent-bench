@@ -11,6 +11,7 @@ from clinicalagent_bench.scenario_engine.models import (
 )
 from clinicalagent_bench.scenario_engine.loader import ScenarioLoader
 from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
+from clinicalagent_bench.scenario_engine.retriever import ScenarioRetriever
 
 __all__ = [
     "EdgeCase",
@@ -22,4 +23,5 @@ __all__ = [
     "ScoringConfig",
     "ScenarioLoader",
     "ScenarioRegistry",
+    "ScenarioRetriever",
 ]
