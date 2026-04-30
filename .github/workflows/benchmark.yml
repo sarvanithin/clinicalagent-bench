@@ -6,8 +6,15 @@ on:
       model:
         description: "Model to benchmark (via LiteLLM)"
         required: true
-        default: "gpt-4o"
-        type: string
+        default: "gpt-4.1"
+        type: choice
+        options:
+          - "gpt-4.1"
+          - "gpt-4.1-mini"
+          - "claude-sonnet-4-20250514"
+          - "claude-haiku-4-5-20251001"
+          - "gemini-2.5-flash"
+          - "gpt-4o"
       domain:
         description: "Domain to benchmark (leave empty for all)"
         required: false

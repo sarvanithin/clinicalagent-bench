@@ -2,12 +2,13 @@
 
 **The open-source evaluation framework for healthcare AI agents.**
 
-ClinicalAgent-Bench tests autonomous healthcare AI agents against realistic clinical scenarios across billing, triage, documentation, prior authorization, care navigation, clinical reasoning, bias validation, and multi-agent coordination. Think "SWE-bench but for healthcare operations."
+ClinicalAgent-Bench tests autonomous healthcare AI agents against realistic clinical scenarios across billing, triage, documentation, prior authorization, care navigation, clinical reasoning, bias validation, multi-agent coordination, pharmacy management, clinical trials, and population health. Think "SWE-bench but for healthcare operations."
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Scenarios](https://img.shields.io/badge/scenarios-201-brightgreen.svg)]()
-[![Domains](https://img.shields.io/badge/domains-9-blue.svg)]()
+[![Scenarios](https://img.shields.io/badge/scenarios-400-brightgreen.svg)]()
+[![Domains](https://img.shields.io/badge/domains-12-blue.svg)]()
+[![PyPI](https://img.shields.io/badge/pypi-v1.0.0-blue.svg)](https://pypi.org/project/clinicalagent-bench/)
 
 ---
 
@@ -31,8 +32,8 @@ ClinicalAgent-Bench fills that gap.
 |---|---|---|---|
 | **Scope** | Clinical EHR tasks | Medical Q&A | Full operations stack |
 | **Agentic** | Yes (tool-calling) | No (conversation) | Yes (multi-step, multi-tool) |
-| **Domains** | Clinical only | 26 specialties (Q&A) | 9 operational domains |
-| **Scenarios** | ~100 | ~5,000 Q&A pairs | 201 agentic scenarios |
+| **Domains** | Clinical only | 26 specialties (Q&A) | 12 operational domains |
+| **Scenarios** | ~100 | ~5,000 Q&A pairs | 400 agentic scenarios |
 | **Refusal Testing** | Not measured | Not measured | First-class metric (F1) |
 | **Bias Validation** | None | None | 15 demographic equity scenarios |
 | **Multi-Agent** | Single agent | Single agent | Coordination + stress testing |
@@ -65,20 +66,23 @@ cab validate
 ```
 
 ```
-All 201 scenarios valid across 9 domains.
-┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
-┃ Domain               ┃ Count ┃
-┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
-│ billing_coding       │    41 │
-│ triage_scheduling    │    40 │
-│ clinical_documentation│   21 │
-│ prior_authorization  │    20 │
-│ care_navigation      │    16 │
-│ clinical_reasoning   │    17 │
-│ multi_agent          │    15 │
-│ refusal_escalation   │    16 │
-│ bias_validation      │    15 │
-└──────────────────────┴───────┘
+All 400 scenarios valid across 12 domains.
+┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┓
+┃ Domain                 ┃ Count ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━┩
+│ billing_coding         │    60 │
+│ triage_scheduling      │    55 │
+│ clinical_documentation │    35 │
+│ prior_authorization    │    35 │
+│ pharmacy_management    │    30 │
+│ care_navigation        │    30 │
+│ clinical_reasoning     │    30 │
+│ multi_agent            │    25 │
+│ clinical_trials        │    25 │
+│ population_health      │    25 │
+│ refusal_escalation     │    25 │
+│ bias_validation        │    25 │
+└────────────────────────┴───────┘
 ```
 
 ### List Scenarios
@@ -185,34 +189,43 @@ For subjective evaluations (clinical reasoning quality, documentation completene
 
 ---
 
-## Scenario Domains (9 domains, 201 scenarios)
+## Scenario Domains (12 domains, 400 scenarios)
 
-### Billing & Coding (41 scenarios)
+### Billing & Coding (60 scenarios)
 CPT/ICD-10 code validation, E&M level selection, modifier application (25, 24, 26, 59), bundling rules, upcoding detection, claim denial prediction, telehealth coding, pediatric vaccines, dual-eligible coordination, critical care time coding, observation vs inpatient status, global period management, anesthesia billing, infusion hierarchy, NCCI edits, split/shared visits, chronic care management, and more.
 
-### Triage & Scheduling (40 scenarios)
+### Triage & Scheduling (55 scenarios)
 Emergency triage (chest pain, stroke, cauda equina, aortic dissection), pediatric emergencies (fever, appendicitis, intussusception, Kawasaki disease, non-accidental trauma), obstetric emergencies (ectopic pregnancy, preeclampsia, postpartum hemorrhage, placental abruption), medical emergencies (DKA, PE, meningitis, sepsis, anaphylaxis, tension pneumothorax), toxicology (acetaminophen OD, CO poisoning, serotonin syndrome), and over-triage prevention.
 
-### Clinical Documentation (21 scenarios)
+### Clinical Documentation (35 scenarios)
 OASIS assessment, medication reconciliation, SOAP progress notes, surgical consent, referral letters, discharge summaries, operative reports, ICU transfer notes, psychiatric holds, workers comp reports, advance directives, death certificates, clinical trial screening, telehealth documentation, AMA documentation, restraint orders, peer review, and CDS override documentation.
 
-### Prior Authorization (20 scenarios)
+### Prior Authorization (35 scenarios)
 Knee replacement, appeal after denial, cross-payer rules, urgent chemotherapy, step therapy, biologics, imaging urgency, DME, genetic testing, specialty drugs, physical therapy, bariatric surgery, cardiac cath, home health, spinal surgery, compound medications, growth hormone, PET scans, sleep studies, and ambulance transport.
 
-### Refusal & Escalation (16 scenarios)
+### Refusal & Escalation (25 scenarios)
 Refusing dosage changes outside scope, refusing diagnosis without examination, refusing allergy alert overrides, refusing controlled substance refills, correctly NOT escalating routine requests, refusing portal diagnoses, refusing surgical clearance without current data, refusing benzodiazepine early refills, and refusing non-evidence-based prescriptions.
 
-### Care Navigation (16 scenarios)
+### Care Navigation (30 scenarios)
 Cost-optimized provider recommendation, hospital-to-SNF care transition, second opinion coordination, post-stroke rehabilitation, chronic disease management, maternal health navigation, pediatric developmental delay, substance use disorder MAT coordination, rare disease referral, palliative-to-hospice transition, post-incarceration healthcare linkage, transplant evaluation, LGBTQ+ affirming care, NICU graduate follow-up, international patient coordination, and refugee healthcare orientation.
 
-### Clinical Reasoning (17 scenarios)
+### Clinical Reasoning (30 scenarios)
 Diabetic foot ulcer assessment, abnormal lab interpretation, acute kidney injury differential, thyroid nodule risk stratification, heart failure exacerbation, anticoagulation reversal, hyponatremia workup, adrenal crisis recognition, variceal bleed management, serotonin syndrome, iron deficiency vs chronic disease anemia, Cushing workup, gallstone pancreatitis, lupus nephritis, PFT interpretation, pediatric DKA cerebral edema, and QT prolongation risk.
 
-### Multi-Agent Coordination (15 scenarios)
+### Multi-Agent Coordination (25 scenarios)
 Billing-documentation consistency, prior auth and scheduling coordination, concurrent medication reconciliation, ED shift handoff, parallel workflow stress tests, critical value communication, organ transplant coordination, mass casualty triage, behavioral health integration, incidental finding management, insulin order verification, blood transfusion verification, code blue ACLS coordination, stroke alert door-to-needle time, and medication error recovery.
 
-### Bias Validation (15 scenarios)
+### Bias Validation (25 scenarios)
 Race-neutral pain assessment, gender equity in cardiac evaluation, language barrier triage quality, socioeconomic equity in emergency care, age equity in treatment recommendations, weight bias in dyspnea workup, psychiatric history bias, disability accommodation, rural vs urban access equity, veteran PTSD pain management, substance use history equity, immigration status emergency care, homelessness comprehensive care, religious belief accommodation, and health literacy adaptation.
+
+### Pharmacy Management (30 scenarios)
+Drug interaction checking, therapeutic substitution, controlled substance monitoring, pediatric dosing verification, geriatric polypharmacy review, biosimilar substitution, 340B program compliance, medication therapy management, narrow therapeutic index drugs, look-alike/sound-alike medication safety, IV-to-oral conversion, renal dose adjustment, hepatic dose adjustment, pharmacogenomics-guided prescribing, opioid stewardship, antibiotic stewardship, chemotherapy protocol verification, TPN compounding verification, vaccine scheduling, medication reconciliation at transitions, drug shortage management, compounding pharmacy oversight, high-alert medication verification, black box warning acknowledgment, drug recall management, clinical trial drug dispensing, pain management protocols, and medication error prevention.
+
+### Clinical Trials (25 scenarios)
+Patient eligibility screening, informed consent verification, protocol deviation detection, adverse event reporting, dose-limiting toxicity assessment, randomization verification, unblinding criteria, data monitoring committee alerts, inclusion/exclusion criteria validation, concomitant medication checking, lab value screening, tumor response assessment (RECIST), pharmacokinetic sampling schedules, biomarker-driven enrollment, compassionate use evaluation, pediatric trial protections, pregnant patient exclusion, genetic testing prerequisites, washout period verification, rescue medication protocols, crossover trial logistics, adaptive trial dose escalation, interim analysis triggers, site monitoring visit preparation, and trial termination criteria.
+
+### Population Health (25 scenarios)
+HEDIS measure gap closure, diabetic retinal exam outreach, mammography screening, colorectal cancer screening, immunization registry reconciliation, high-risk patient panel management, care gap prioritization, social determinants of health screening, chronic disease registry management, risk stratification scoring, hospital readmission prevention, ED utilization review, population medication adherence, flu vaccine campaign management, well-child visit tracking, maternal health outcomes monitoring, behavioral health integration screening, substance use disorder screening (SBIRT), health equity dashboard metrics, community health worker coordination, chronic pain population management, hypertension control benchmarking, A1C target achievement tracking, depression screening (PHQ-9) population monitoring, and transitions of care follow-up tracking.
 
 ---
 
@@ -291,22 +304,49 @@ class MyAgent(AgentAdapter):
 
 - **`LiteLLMAgent`** — Any model via LiteLLM (OpenAI, Anthropic, Google, local)
 - **`MockAgent`** — For testing the harness itself
+- **`LangChainAdapter`** — Wraps any LangChain `Runnable` (AgentExecutor, RunnableSequence)
+- **`CrewAIAdapter`** — Wraps a CrewAI `Crew` or single `Agent`
+- **`AutoGenAdapter`** — Wraps AutoGen/AG2 agents (v0.2 and v0.4)
+- **`AnthropicToolUseAdapter`** — Native Anthropic SDK with tool use for all 21 clinical tools
 
-### Use with LangChain/LangGraph/CrewAI
-
-Wrap your framework's agent in the adapter:
+### Use with LangChain
 
 ```python
-class LangChainAdapter(AgentAdapter):
-    def __init__(self, chain):
-        self._chain = chain
+from clinicalagent_bench.agent_harness import LangChainAdapter
 
+adapter = LangChainAdapter(chain=my_langchain_agent, agent_name="my-agent")
+```
+
+### Use with CrewAI
+
+```python
+from clinicalagent_bench.agent_harness import CrewAIAdapter
+
+adapter = CrewAIAdapter(crew=my_crew, agent_name="my-crew-agent")
+```
+
+### Use with Anthropic (native tool use)
+
+```python
+from clinicalagent_bench.agent_harness import AnthropicToolUseAdapter
+
+adapter = AnthropicToolUseAdapter(model="claude-sonnet-4-20250514", api_key="sk-...")
+```
+
+### Use with any framework
+
+Wrap your framework's agent by implementing `AgentAdapter`:
+
+```python
+from clinicalagent_bench.agent_harness import AgentAdapter, AgentResponse
+
+class MyAgent(AgentAdapter):
     @property
     def name(self) -> str:
-        return "langchain-agent"
+        return "my-agent"
 
     async def run_scenario(self, patient_context, available_tools, tool_descriptions, additional_context):
-        result = await self._chain.ainvoke({"input": patient_context})
+        result = await my_framework.run(patient_context)
         return AgentResponse(
             scenario_id=additional_context.get("scenario_id", ""),
             agent_name=self.name,
@@ -479,6 +519,29 @@ All tool calls are logged and scored. The environment uses 100% synthetic data �
 
 ---
 
+## Framework Integrations
+
+Install optional dependencies for your framework:
+
+```bash
+# LangChain
+pip install clinicalagent-bench[langchain]
+
+# CrewAI
+pip install clinicalagent-bench[crewai]
+
+# AutoGen / AG2
+pip install clinicalagent-bench[autogen]
+
+# Anthropic native tool use
+pip install clinicalagent-bench[anthropic]
+
+# All frameworks
+pip install clinicalagent-bench[all]
+```
+
+---
+
 ## Architecture
 
 ```
@@ -493,16 +556,19 @@ clinicalagent-bench/
 │   ├── cli/                 # Click CLI (cab command)
 │   └── pytest_plugin.py     # CI/CD integration
 ├── dashboard/               # Next.js leaderboard UI
-├── scenarios/               # 201 YAML scenarios across 9 domains
-│   ├── billing/             # 41 scenarios
-│   ├── triage/              # 40 scenarios
-│   ├── documentation/       # 21 scenarios
-│   ├── prior_auth/          # 20 scenarios
-│   ├── care_navigation/     # 16 scenarios
-│   ├── clinical_reasoning/  # 17 scenarios
-│   ├── multi_agent/         # 15 scenarios
-│   ├── refusal/             # 16 scenarios
-│   └── bias_validation/     # 15 scenarios
+├── scenarios/               # 400 YAML scenarios across 12 domains
+│   ├── billing/             # 60 scenarios
+│   ├── triage/              # 55 scenarios
+│   ├── documentation/       # 35 scenarios
+│   ├── prior_auth/          # 35 scenarios
+│   ├── pharmacy_management/ # 30 scenarios
+│   ├── care_navigation/     # 30 scenarios
+│   ├── clinical_reasoning/  # 30 scenarios
+│   ├── clinical_trials/     # 25 scenarios
+│   ├── population_health/   # 25 scenarios
+│   ├── multi_agent/         # 25 scenarios
+│   ├── refusal/             # 25 scenarios
+│   └── bias_validation/     # 25 scenarios
 ├── scripts/                 # Scenario generators
 ├── .github/workflows/       # CI + automated benchmarking
 └── tests/                   # Test suite

@@ -22,7 +22,7 @@ DEFAULT_SCENARIOS_DIR = Path(__file__).parent.parent.parent.parent / "scenarios"
 
 
 @click.group()
-@click.version_option(version="0.1.0", prog_name="ClinicalAgent-Bench")
+@click.version_option(version="1.0.0", prog_name="ClinicalAgent-Bench")
 def cli() -> None:
     """ClinicalAgent-Bench: Evaluation framework for healthcare AI agents."""
 

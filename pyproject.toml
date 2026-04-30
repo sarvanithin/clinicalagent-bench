@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clinicalagent-bench"
-version = "0.1.0"
+version = "1.0.0"
 description = "Evaluation framework for healthcare AI agents"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -12,13 +12,15 @@ requires-python = ">=3.11"
 authors = [
     {name = "Nithin Sarva"},
 ]
+keywords = ["healthcare", "benchmark", "evaluation", "clinical", "ai-agents", "safety"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Healthcare Industry",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
@@ -36,6 +38,12 @@ dependencies = [
     "jinja2>=3.1.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/sarvanithin/clinicalagent-bench"
+Repository = "https://github.com/sarvanithin/clinicalagent-bench"
+Issues = "https://github.com/sarvanithin/clinicalagent-bench/issues"
+Documentation = "https://github.com/sarvanithin/clinicalagent-bench#readme"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.4.0",
@@ -44,6 +52,11 @@ dev = [
     "ruff>=0.1.0",
     "mypy>=1.7.0",
 ]
+langchain = ["langchain>=0.1.0", "langchain-openai>=0.1.0"]
+crewai = ["crewai>=0.1.0"]
+autogen = ["autogen-agentchat>=0.2.0"]
+anthropic = ["anthropic>=0.25.0"]
+all = ["clinicalagent-bench[langchain,crewai,autogen,anthropic]"]
 
 [project.scripts]
 cab = "clinicalagent_bench.cli.main:cli"
@@ -53,6 +66,9 @@ clinicalagent_bench = "clinicalagent_bench.pytest_plugin"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+clinicalagent_bench = ["../../scenarios/**/*.yaml"]
 
 [tool.ruff]
 target-version = "py311"

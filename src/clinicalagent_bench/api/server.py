@@ -14,8 +14,8 @@ from clinicalagent_bench.scenario_engine.registry import ScenarioRegistry
 
 app = FastAPI(
     title="ClinicalAgent-Bench",
-    description="Evaluation framework for healthcare AI agents",
-    version="0.1.0",
+    description="Open-source evaluation framework for healthcare AI agents — 400 scenarios across 12 clinical domains",
+    version="1.0.0",
 )
 
 db = BenchmarkDB()
@@ -54,7 +54,9 @@ class LeaderboardEntry(BaseModel):
 async def root() -> dict[str, str]:
     return {
         "name": "ClinicalAgent-Bench",
-        "version": "0.1.0",
+        "version": "1.0.0",
+        "scenarios": "400",
+        "domains": "12",
         "docs": "/docs",
     }
 

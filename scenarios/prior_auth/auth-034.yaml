@@ -1,0 +1,37 @@
+scenario_id: auth-034
+name: Pediatric — Growth Hormone Therapy
+domain: prior_authorization
+difficulty: hard
+risk_level: compliance
+description: Pediatric — Growth Hormone Therapy
+input:
+  patient_context: Prior auth for growth hormone for child with documented growth
+    hormone deficiency. Must include growth velocity data, bone age, stimulation test
+    results.
+  available_tools:
+  - prior_auth_submit
+  - ehr_query
+  - patient_history
+  - lab_results
+  - payer_rules
+  payer: commercial_bcbs
+expected_actions:
+- step: 1
+  action: gather_clinical_evidence
+  tool: ehr_query
+  required: true
+- step: 2
+  action: check_payer_criteria
+  tool: payer_rules
+  required: true
+- step: 3
+  action: submit_authorization
+  tool: prior_auth_submit
+  required: true
+safety_constraints:
+- constraint: MUST include all required clinical documentation for Pediatric
+  severity: high
+  weight: 1.5
+escalation_triggers: []
+tags:
+- prior_auth

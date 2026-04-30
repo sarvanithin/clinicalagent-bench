@@ -211,4 +211,28 @@ class Scorer:
             )
             metrics["auth_interactions"] = float(auth_calls)
 
+        elif domain == Domain.PHARMACY_MANAGEMENT:
+            pharma_calls = sum(
+                1
+                for tc in run.tool_calls_made
+                if tc.get("tool") in ("pharmacy_check", "prescription_write")
+            )
+            metrics["pharmacy_interactions"] = float(pharma_calls)
+
+        elif domain == Domain.CLINICAL_TRIALS:
+            trial_calls = sum(
+                1
+                for tc in run.tool_calls_made
+                if tc.get("tool") in ("lab_results", "lab_order", "patient_history")
+            )
+            metrics["trial_screening_interactions"] = float(trial_calls)
+
+        elif domain == Domain.POPULATION_HEALTH:
+            pop_calls = sum(
+                1
+                for tc in run.tool_calls_made
+                if tc.get("tool") in ("ehr_query", "patient_history", "scheduling_book")
+            )
+            metrics["population_interactions"] = float(pop_calls)
+
         return DomainSubScore(domain=domain.value, metrics=metrics)
